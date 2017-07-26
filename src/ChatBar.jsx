@@ -3,17 +3,11 @@ import React, {Component} from 'react';
 class ChatBar extends Component {
   render() {
     return (
-
-
-
-
-      <footer>
-        <form>
-          <input type="text" className="inputUsername" placeholder="Your Name (Optional)" />
-          <input type="text" className="inputMessage" placeholder="Type a message and press ENTER" />
-        </form>
+      <footer className="chatbar">
+        <input className="chatbar-username" placeholder="Your Name (Optional)" />
+        <input className="chatbar-message" placeholder="Type a message and hit ENTER" />
       </footer>
-    );
+      );
   }
 }
 export default ChatBar;
