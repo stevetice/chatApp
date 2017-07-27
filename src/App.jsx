@@ -26,6 +26,17 @@ class App extends Component {
 
     handleNewMessage(message) {
     const messages = this.state.messages.concat(message)
+    const msg = {
+      id:   message.id,
+      type: "message",
+      username: message.username,
+      content: message.content
+    };
+    console.log(msg);
+  // Send the msg object as a JSON-formatted string.
+    this.ws.send(JSON.stringify(msg));
+    console.log(msg);
+
     this.setState({messages: messages});
   }
 
