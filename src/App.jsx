@@ -21,6 +21,12 @@ class App extends Component {
         }
       ]
     }
+    this.handleNewMessage=this.handleNewMessage.bind(this);
+  }
+
+  handleNewMessage(message) {
+    const messages = this.state.messages.concat(message)
+    this.setState({messages: messages});
   }
 
   componentDidMount() {
@@ -44,7 +50,7 @@ class App extends Component {
             <a href="/" className="navbar-brand">Chatty</a>
         </nav>
         <MessageList messages= {this.state.messages}/>
-        <ChatBar name= {this.state.currentUser.name}/>
+        <ChatBar name= {this.state.currentUser.name} handleNewMessage={this.handleNewMessage}/>
       </div>
     );
   }
