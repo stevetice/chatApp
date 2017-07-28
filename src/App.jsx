@@ -9,12 +9,14 @@ class App extends Component {
     this.state = {
       currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: [],
-      messagesystem: []
+      messagesystem: [],
+      userCount: []
     };
     this.handleNewMessage=this.handleNewMessage.bind(this);
     this.incomingMessage=this.incomingMessage.bind(this);
     this.handleNewUser=this.handleNewUser.bind(this);
     this.incomingNotification=this.incomingNotification.bind(this);
+    this.incomingCount=this.incomingCount.bind(this);
   }
 
   incomingMessage(eventData) {
@@ -28,6 +30,11 @@ class App extends Component {
     // const receivedNotification = JSON.parsed(eventData);
     console.log(eventData);
     this.setState({messagesystem: eventData.content})
+  }
+
+  incomingCount(eventData) {
+    console.log(eventData);
+    this.setState({userCount: eventData.users})
   }
 
   handleNewMessage(message) {
@@ -81,6 +88,10 @@ class App extends Component {
           // handle incoming notification
           this.incomingNotification(data);
           break;
+        case "incomingCount":
+        console.log(data);
+          this.incomingCount(data);
+          break;
         default:
           // show error in console if the message type is unknown
           throw new Error("Unknown event type " + data.type);
@@ -95,6 +106,7 @@ class App extends Component {
       <div>
         <nav className="navbar">
             <a href="/" className="navbar-brand">Chatty</a>
+            <span className="counter"> Users Online: {this.state.userCount}</span>
         </nav>
         <MessageList messages= {this.state.messages} messagesystem={this.state.messagesystem}/>
         <ChatBar name= {this.state.currentUser.name} handleNewMessage={this.handleNewMessage} handleNewUser={this.handleNewUser}/>
