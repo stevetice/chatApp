@@ -6,7 +6,7 @@ class ChatBar extends Component {
     if (e.key === 'Enter') {
       const message = {
         id: uuid(),
-        username: this.props.name,
+        name: this.props.name,
         content: e.target.value
       }
       this.props.handleNewMessage(message);
@@ -15,10 +15,11 @@ class ChatBar extends Component {
 
   handleNameKeyPress = (e) => {
     if (e.key === 'Enter') {
-      const username = {
-        username: e.target.value
+      const name = {
+        id: uuid(),
+        name: e.target.value
       }
-      this.props.handleNewUser(username);
+      this.props.handleNewUser(name);
     }
   }
   render() {

@@ -7,28 +7,36 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: {name: ""}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: []
+      currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
+      messages: [],
+      messagesystem: []
     };
     this.handleNewMessage=this.handleNewMessage.bind(this);
     this.incomingMessage=this.incomingMessage.bind(this);
     this.handleNewUser=this.handleNewUser.bind(this);
+    this.incomingNotification=this.incomingNotification.bind(this);
   }
 
-  incomingMessage(event) {
-    const receivedMessage = JSON.parse(event.data);
-    console.log(receivedMessage);
-    const messages = this.state.messages.concat(receivedMessage)
+  incomingMessage(eventData) {
+    // const receivedMessage = JSON.parse(event.data);
+    console.log(eventData);
+    const messages = this.state.messages.concat(eventData)
     this.setState({messages: messages})
   }
 
+  incomingNotification(eventData) {
+    // const receivedNotification = JSON.parsed(eventData);
+    console.log(eventData);
+    this.setState({messagesystem: eventData.content})
+  }
+
   handleNewMessage(message) {
-  console.log(message);
+  // console.log(message);
   const messages = this.state.messages.concat(message)
   const msg = {
     id:   message.id,
-    type: "message",
-    username: message.username,
+    type: "postMessage",
+    username: message.name,
     content: message.content
   };
   // Send the msg object as a JSON-formatted string.
@@ -36,27 +44,49 @@ class App extends Component {
     // this.setState({messages: messages});
   }
 
-  handleNewUser(username) {
-    console.log(username);
-    // const currentUser = username;
+  handleNewUser(nameObj) {
+    function checkName(name) {
+      return name === '' ? 'Anonymous': name;
+    }
+    const newName = checkName(nameObj.name.trim());
+    const oldName = this.state.currentUser.name;
 
-    this.setState({currentUser: {name: username.username}});
+    const user = {
+      id: name.id,
+      content: `${oldName} changed their name to ${newName}.`,
+      type: "postNotification"
+    }
+    this.ws.send(JSON.stringify(user));
+    this.setState({currentUser: {name: newName}});
   }
 
   componentDidMount() {
     console.log("componentDidMount <App />");
-    // setTimeout(() => {
-    //   console.log("Simulating incoming message");
-    //   // Add a new message to the list of messages in the data store
-    //   const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
-    //   const messages = this.state.messages.concat(newMessage)
-    //   // Update the state of the app component.
-    //   // Calling setState will trigger a call to render() in App and all child components.
-    //   this.setState({messages: messages})
-    // }, 3000);
+
     this.ws = new WebSocket("ws://localhost:3001");
-    console.log('Connected to server');
-    this.ws.onmessage = this.incomingMessage
+
+    this.ws.onopen = (event) => {
+      console.log('Connected to server');
+    }
+
+    this.ws.onmessage = (event) => {
+      // console.log(event);
+      const data = JSON.parse(event.data);
+      switch(data.type) {
+        case "incomingMessage":
+          // handle incoming message
+          this.incomingMessage(data);
+          break;
+        case "incomingNotification":
+          // handle incoming notification
+          this.incomingNotification(data);
+          break;
+        default:
+          // show error in console if the message type is unknown
+          throw new Error("Unknown event type " + data.type);
+      }
+    }
+    this.incomingMessage
   }
 
   render() {
@@ -66,7 +96,7 @@ class App extends Component {
         <nav className="navbar">
             <a href="/" className="navbar-brand">Chatty</a>
         </nav>
-        <MessageList messages= {this.state.messages}/>
+        <MessageList messages= {this.state.messages} messagesystem={this.state.messagesystem}/>
         <ChatBar name= {this.state.currentUser.name} handleNewMessage={this.handleNewMessage} handleNewUser={this.handleNewUser}/>
       </div>
     );
