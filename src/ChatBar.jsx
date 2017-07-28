@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import uuid from 'uuid';
 
 class ChatBar extends Component {
+
   handleMessageKeyPress = (e) => {
     if (e.key === 'Enter') {
       const message = {
@@ -22,6 +23,7 @@ class ChatBar extends Component {
       this.props.handleNewUser(name);
     }
   }
+
   render() {
         console.log("Rendering <ChatBar/>");
     return (

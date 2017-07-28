@@ -7,7 +7,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
+      currentUser: {name: ''}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: [],
       messagesystem: [],
       userCount: []
@@ -20,14 +20,12 @@ class App extends Component {
   }
 
   incomingMessage(eventData) {
-    // const receivedMessage = JSON.parse(event.data);
     console.log(eventData);
     const messages = this.state.messages.concat(eventData)
     this.setState({messages: messages})
   }
 
   incomingNotification(eventData) {
-    // const receivedNotification = JSON.parsed(eventData);
     console.log(eventData);
     this.setState({messagesystem: eventData.content})
   }
@@ -38,17 +36,14 @@ class App extends Component {
   }
 
   handleNewMessage(message) {
-  // console.log(message);
-  const messages = this.state.messages.concat(message)
-  const msg = {
-    id:   message.id,
-    type: "postMessage",
-    username: message.name,
-    content: message.content
-  };
-  // Send the msg object as a JSON-formatted string.
+    const messages = this.state.messages.concat(message)
+    const msg = {
+      id:   message.id,
+      type: "postMessage",
+      username: message.name,
+      content: message.content
+    };
     this.ws.send(JSON.stringify(msg));
-    // this.setState({messages: messages});
   }
 
   handleNewUser(nameObj) {
@@ -77,15 +72,12 @@ class App extends Component {
     }
 
     this.ws.onmessage = (event) => {
-      // console.log(event);
       const data = JSON.parse(event.data);
       switch(data.type) {
         case "incomingMessage":
-          // handle incoming message
           this.incomingMessage(data);
           break;
         case "incomingNotification":
-          // handle incoming notification
           this.incomingNotification(data);
           break;
         case "incomingCount":
