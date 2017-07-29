@@ -7,7 +7,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: {name: ''}, // optional. if currentUser is not defined, it means the user is Anonymous
+      currentUser: {name: 'Anonymous'}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: [],
       messagesystem: [],
       userCount: []
@@ -20,27 +20,24 @@ class App extends Component {
   }
 
   incomingMessage(eventData) {
-    console.log(eventData);
     const messages = this.state.messages.concat(eventData)
     this.setState({messages: messages})
   }
 
   incomingNotification(eventData) {
-    console.log(eventData);
     this.setState({messagesystem: eventData.content})
   }
 
   incomingCount(eventData) {
-    console.log(eventData);
     this.setState({userCount: eventData.users})
   }
 
   handleNewMessage(message) {
-    const messages = this.state.messages.concat(message)
+    // const messages = this.state.messages.concat(message)
     const msg = {
       id:   message.id,
-      type: "postMessage",
-      username: message.name,
+      type: 'postMessage',
+      username: this.state.currentUser.name,
       content: message.content
     };
     this.ws.send(JSON.stringify(msg));
@@ -56,16 +53,16 @@ class App extends Component {
     const user = {
       id: name.id,
       content: `${oldName} changed their name to ${newName}.`,
-      type: "postNotification"
+      type: 'postNotification'
     }
     this.ws.send(JSON.stringify(user));
     this.setState({currentUser: {name: newName}});
   }
 
   componentDidMount() {
-    console.log("componentDidMount <App />");
+    console.log('componentDidMount <App />');
 
-    this.ws = new WebSocket("ws://localhost:3001");
+    this.ws = new WebSocket('ws://localhost:3001');
 
     this.ws.onopen = (event) => {
       console.log('Connected to server');
@@ -74,26 +71,25 @@ class App extends Component {
     this.ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       switch(data.type) {
-        case "incomingMessage":
+        case 'incomingMessage':
           this.incomingMessage(data);
           break;
-        case "incomingNotification":
+        case 'incomingNotification':
           this.incomingNotification(data);
           break;
-        case "incomingCount":
-        console.log(data);
+        case 'incomingCount':
           this.incomingCount(data);
           break;
         default:
           // show error in console if the message type is unknown
-          throw new Error("Unknown event type " + data.type);
+          throw new Error('Unknown event type ' + data.type);
       }
     }
     this.incomingMessage
   }
 
   render() {
-    console.log("Rendering <App/>");
+    console.log('Rendering <App/>');
     return (
       <div>
         <nav className="navbar">
