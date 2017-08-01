@@ -6,6 +6,7 @@ class App extends Component {
 
   constructor(props) {
     super(props);
+    // Stores current state of user, messages displayed, count of users online
     this.state = {
       currentUser: {name: 'Anonymous'}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: [],
@@ -15,23 +16,21 @@ class App extends Component {
     this.handleNewMessage=this.handleNewMessage.bind(this);
     this.incomingMessage=this.incomingMessage.bind(this);
     this.handleNewUser=this.handleNewUser.bind(this);
-    this.incomingNotification=this.incomingNotification.bind(this);
     this.incomingCount=this.incomingCount.bind(this);
   }
 
+  // Receives incoming messages and notifications
   incomingMessage(eventData) {
     const messages = this.state.messages.concat(eventData)
     this.setState({messages: messages})
   }
 
-  incomingNotification(eventData) {
-    this.setState({messagesystem: eventData.content})
-  }
-
+  // Receives current number of users from the server
   incomingCount(eventData) {
     this.setState({userCount: eventData.users})
   }
 
+  // Sends message to server when user enters message into message field
   handleNewMessage(message) {
     // const messages = this.state.messages.concat(message)
     const msg = {
@@ -43,6 +42,7 @@ class App extends Component {
     this.ws.send(JSON.stringify(msg));
   }
 
+  // Sends message to server when new user name is entered in chat bar name field
   handleNewUser(nameObj) {
     function checkName(name) {
       return name === '' ? 'Anonymous': name;
@@ -68,14 +68,13 @@ class App extends Component {
       console.log('Connected to server');
     }
 
+    // Directs incoming event to proper handler
     this.ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       switch(data.type) {
         case 'incomingMessage':
-          this.incomingMessage(data);
-          break;
         case 'incomingNotification':
-          this.incomingNotification(data);
+          this.incomingMessage(data);
           break;
         case 'incomingCount':
           this.incomingCount(data);
@@ -85,7 +84,6 @@ class App extends Component {
           throw new Error('Unknown event type ' + data.type);
       }
     }
-    this.incomingMessage
   }
 
   render() {

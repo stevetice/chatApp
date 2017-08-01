@@ -5,16 +5,16 @@ class MessageList extends Component {
 
   render() {
   console.log('Rendering <MessageList/>');
-  let messages = this.props.messages.map((message, index) =>
-    <Message key={message.id} username={message.username} message={message.content}/>
+
+  // Determines how to display message by type received
+  let messages = this.props.messages.map((message, index) => message.type == "incomingMessage"
+    ? <Message key={message.id} username={message.username} message={message.content}/>
+    : <div className="message system" key={message.id}>{message.content}</div>
   );
     return (
       <div>
         <main className="messages">
           {messages}
-        <div className="message system">
-          {this.props.messagesystem}
-        </div>
         </main>
       </div>
     );
