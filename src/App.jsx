@@ -32,7 +32,6 @@ class App extends Component {
 
   // Sends message to server when user enters message into message field
   handleNewMessage(message) {
-    // const messages = this.state.messages.concat(message)
     const msg = {
       id:   message.id,
       type: 'postMessage',
@@ -86,6 +85,7 @@ class App extends Component {
     }
   }
 
+  // Renders messages
   render() {
     console.log('Rendering <App/>');
     return (
